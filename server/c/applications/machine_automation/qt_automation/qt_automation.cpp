@@ -103,7 +103,7 @@ extern "C"
 
    const char * firmware_version ()
    {
-      return SQ_SVN_REVISION;
+      return SQ_SCM_REVISION;
    }
 }
 
