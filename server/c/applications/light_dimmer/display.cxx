@@ -10,7 +10,7 @@ void initDisplay ()
 {
    Cls ();
    PutString ( 1, 1, "Sequanto LightDimmer" );
-   PutString ( 2, 1, " v. " SQ_SVN_REVISION );
+   PutString ( 2, 1, " v. " SQ_SCM_REVISION );
    PutString ( 3, 1, "Level: " );
 }
 

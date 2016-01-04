@@ -89,8 +89,3 @@ SQByteArray * windows_child ( SQByteArray * _pointer, long _childNum )
 {
    return NULL;
 }
-
-SQByteArray * windows_capture_screen ( void )
-{
-   return NULL;
-}

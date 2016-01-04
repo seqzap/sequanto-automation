@@ -18,7 +18,7 @@ extern "C"
 {
    const char * svn_revision ( void )
    {
-      return sq_get_constant_string(SQ_STRING_CONSTANT(SQ_SVN_REVISION));
+      return sq_get_constant_string(SQ_STRING_CONSTANT(SQ_SCM_REVISION));
    }
 }
 

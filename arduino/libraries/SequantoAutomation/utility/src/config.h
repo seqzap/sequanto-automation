@@ -12,8 +12,8 @@
 #ifndef _SQ_CONFIG_H_
 #define _SQ_CONFIG_H_
 
-#define SQ_SVN_REVISION "462M"
-#define CPACK_PACKAGE_VERSION "0.9.0"
+#define SQ_SCM_REVISION "????"
+#define CPACK_PACKAGE_VERSION "0.9.2"
 #define CPACK_PACKAGE_VENDOR "CIM Software Testing A/S"
 
 #define SQ_USE_BSD_SOCKETS

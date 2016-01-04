@@ -52,7 +52,7 @@ void reset_digital_output ( int portNumber )
    sq_server_get_instance();
 #endif
 
-   sq_logf ( "Running on version %s", SVN_REVISION );
+   sq_logf ( "Running on version %s", SCM_REVISION );
    sq_logf ( "Resetting digital output %i, setting to %b. Server has instance %x.", portNumber, SQ_FALSE, server );
    digital_outputs[portNumber] = SQ_FALSE;
    sq_digital_output_value_updated ( portNumber, SQ_FALSE );
@@ -107,7 +107,7 @@ const char * firmware_version ( void )
 #ifdef SQ_DISABLE_AUTOMATION_INTERFACE
    return NULL;
 #else
-   return sq_get_constant_string(SQ_STRING_CONSTANT(SQ_SVN_REVISION));
+   return sq_get_constant_string(SQ_STRING_CONSTANT(SQ_SCM_REVISION));
 #endif
 }
 

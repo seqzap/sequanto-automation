@@ -5,7 +5,7 @@ char s_responseBuffer[40];
 
 const char * main_svn_revision ( void )
 {
-   return sq_get_constant_string(SQ_STRING_CONSTANT(SQ_SVN_REVISION));
+   return sq_get_constant_string(SQ_STRING_CONSTANT(SQ_SCM_REVISION));
 }
 
 static const char PRODUCT[] SQ_CONST_VARIABLE = "Acme V200-B1";
