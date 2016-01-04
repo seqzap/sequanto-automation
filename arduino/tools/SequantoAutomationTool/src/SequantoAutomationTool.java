@@ -22,7 +22,16 @@ public class SequantoAutomationTool implements Tool
     {
         this.m_editor = _editor;
 
-        File toolRoot = new File ( SequantoAutomationTool.class.getProtectionDomain().getCodeSource().getLocation().getPath() ).getParentFile().getParentFile();
+        File toolRoot = null;
+        try
+        {
+            toolRoot = new File ( SequantoAutomationTool.class.getProtectionDomain().getCodeSource().getLocation().toURI() ).getParentFile().getParentFile();
+        }
+        catch ( java.net.URISyntaxException ex )
+        {
+            toolRoot = new File ( SequantoAutomationTool.class.getProtectionDomain().getCodeSource().getLocation().getPath() ).getParentFile().getParentFile();
+        }
+
         m_generatorPy = new File ( new File ( toolRoot, "generator"), "generate_automation_defines.py" ).getAbsolutePath();
         m_isWindows = System.getProperty("os.name").toLowerCase().contains("win");
         if ( m_isWindows )
