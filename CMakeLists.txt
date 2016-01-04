@@ -3,11 +3,11 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 PROJECT(libSequantoAutomation C CXX)
 
 SET(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Sequanto Automation library")
-SET(CPACK_PACKAGE_VERSION "0.9.2")
+SET(CPACK_PACKAGE_VERSION "0.9.3")
 SET(CPACK_PACKAGE_VENDOR "CIM Software Testing A/S")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Rasmus Toftdahl Olesen <rto@cim.as>")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
-SET(CPACK_NSIS_URL_INFO_ABOUT "http:\\\\\\\\code.google.com\\\\sequanto-automation\\\\")
+SET(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/seqzap/sequanto-automation#readme")
 
 INCLUDE(CPack)
 
