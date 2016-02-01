@@ -3,6 +3,7 @@
 #include <sequanto/macros.h>
 #include <iostream>
 #include <QtGui>
+#include <QNetworkInterface>
 
 MainWin::MainWin ( QWidget * _parent )
    : QMainWindow ( _parent )
@@ -24,6 +25,14 @@ MainWin::MainWin ( QWidget * _parent )
       }
       ui.m_tableWidget->setColumnHidden ( 1, true );
    }
+   QString text("Listening on:\n");
+   QHostAddress address;
+   foreach(address, QNetworkInterface::allAddresses())
+   {
+       text += address.toString();
+       text += "\n";
+   }
+   ui.m_listeningOn->setText(text);
 }
 
 void MainWin::on_exitButton_clicked()

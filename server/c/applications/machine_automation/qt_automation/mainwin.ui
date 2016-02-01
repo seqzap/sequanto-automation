@@ -146,8 +146,8 @@
    <widget class="QPushButton" name="m_addLabel">
     <property name="geometry">
      <rect>
-      <x>470</x>
-      <y>60</y>
+      <x>520</x>
+      <y>20</y>
       <width>75</width>
       <height>23</height>
      </rect>
@@ -170,8 +170,8 @@
    <widget class="QPushButton" name="m_changeColor">
     <property name="geometry">
      <rect>
-      <x>404</x>
-      <y>162</y>
+      <x>240</x>
+      <y>280</y>
       <width>111</width>
       <height>31</height>
      </rect>
@@ -212,6 +212,56 @@
     <column/>
     <column/>
    </widget>
+   <widget class="QLabel" name="m_listeningOn">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>50</y>
+      <width>211</width>
+      <height>241</height>
+     </rect>
+    </property>
+    <property name="palette">
+     <palette>
+      <active>
+       <colorrole role="AlternateBase">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </active>
+      <inactive>
+       <colorrole role="AlternateBase">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </inactive>
+      <disabled>
+       <colorrole role="AlternateBase">
+        <brush brushstyle="SolidPattern">
+         <color alpha="255">
+          <red>255</red>
+          <green>255</green>
+          <blue>0</blue>
+         </color>
+        </brush>
+       </colorrole>
+      </disabled>
+     </palette>
+    </property>
+    <property name="text">
+     <string>&lt;Listening on...&gt;</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -219,7 +269,7 @@
      <x>0</x>
      <y>0</y>
      <width>845</width>
-     <height>18</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
