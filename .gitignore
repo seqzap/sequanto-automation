@@ -1,3 +1,4 @@
 *~
 *.pyc
 build
+server/c/applications/arduino_due_can_monitor/code
