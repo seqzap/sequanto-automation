@@ -37,7 +37,7 @@ IF(UNIX)
 ENDIF(UNIX)
 
 IF(SQ_ARDUINO)
-    SET(C_SRCS_ARDUINO ${C_SRCS} src/sq_stream_arduino.c)
+    SET(C_SRCS_ARDUINO ${C_SRCS} src/sq_stream_arduino.c src/sq_stream_arduino_due_can.c)
     FILE(COPY ${C_SRCS_ARDUINO} DESTINATION "${SQ_ARDUINO_OUTPUT}/libraries/SequantoAutomation/utility/src")
     FILE(COPY ${C_HEADERS} DESTINATION "${SQ_ARDUINO_OUTPUT}/libraries/SequantoAutomation/sequanto")
 ENDIF(SQ_ARDUINO)

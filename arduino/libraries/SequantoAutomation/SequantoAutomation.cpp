@@ -3,7 +3,11 @@
 
 #include "utility/src/sq_server.c"
 #include "utility/src/sq_parser.c"
+#ifdef SQ_ARDUINO_CAN
+#include "utility/src/sq_stream_arduino_due_can.c"
+#else
 #include "utility/src/sq_stream_arduino.c"
+#endif
 #include "utility/src/sq_value.c"
 #include "utility/src/sq_types.c"
 #include "utility/src/sq_protocol.c"

@@ -13,7 +13,7 @@
 #define _SQ_CONFIG_H_
 
 #define SQ_SCM_REVISION "????"
-#define CPACK_PACKAGE_VERSION "0.9.2"
+#define CPACK_PACKAGE_VERSION "0.9.4"
 #define CPACK_PACKAGE_VENDOR "CIM Software Testing A/S"
 
 #define SQ_USE_BSD_SOCKETS
@@ -122,6 +122,8 @@ char * sq_internal_strdup ( const char * _value );
 #   undef HAVE_SNPRINTF
 #   define HAVE_DTOSTRF
 #endif
+#define SQ_ARDUINO_CAN_BAUD_RATE 125000
+#define SQ_ARDUINO_CAN_ID 1234
 #endif
 
 #endif /* _sq_CONFIG_H_ */
