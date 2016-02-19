@@ -1,15 +1,18 @@
 /* -*- mode: java; c-basic-offset: 4; indent-tabs-mode: nil -*- */
 
-package com.google.code.SequantoAutomation;
+package com.github.seqzap.SequantoAutomation;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.regex.*;
 import java.io.*;
 import java.util.Scanner;
-
+import java.nio.file.Files;
+import org.apache.commons.codec.digest.DigestUtils;
 import processing.app.*;
+import processing.app.helpers.*;
 import processing.app.tools.Tool;
+import cc.arduino.files.DeleteFilesOnShutdown;
 
 public class SequantoAutomationTool implements Tool
 {
@@ -17,6 +20,18 @@ public class SequantoAutomationTool implements Tool
     private String m_generatorPy;
     private boolean m_isWindows;
     private File m_pythonPath;
+
+    static public File getBuildFolder(Sketch data) throws IOException {
+        File buildFolder;
+        if (PreferencesData.get("build.path") != null) {
+            buildFolder = BaseNoGui.absoluteFile(PreferencesData.get("build.path"));
+            Files.createDirectories(buildFolder.toPath());
+        } else {
+            buildFolder = FileUtils.createTempFolder("build", DigestUtils.md5Hex(data.getMainFilePath()) + ".tmp");
+            DeleteFilesOnShutdown.add(buildFolder);
+        }
+        return buildFolder;
+    }
 
     public void init(Editor _editor)
     {
@@ -91,8 +106,13 @@ public class SequantoAutomationTool implements Tool
                 {
                     String automationCode = code.substring ( start + "BEGIN AUTOMATION".length(), end );
                     automationCode = automationCode.replaceAll ( "\\*\\s+", "" );
-
-                    File automationFileName = new File(sketch.prepareCodeFolder(), "automation.automation" );
+                    //SketchData sketchData = new MySketchData(sketch.getMainFilePath());
+                    //File buildFolder = BaseNoGui.getBuildFolder(sketchData);
+                    File buildFolder = getBuildFolder(sketch);
+                    //File codeFolder = sketchData.getCodeFolder();
+                    File codeFolder = new File(sketch.getFolder(), "code");
+                    Files.createDirectories(codeFolder.toPath());
+                    File automationFileName = new File(buildFolder, "automation.automation" );
                     FileWriter writer = new FileWriter ( automationFileName );
                     writer.write ( "name automation\n" );
                     writer.write ( "import " + sketch.getMainFilePath().toString() + "\n" );
@@ -103,13 +123,13 @@ public class SequantoAutomationTool implements Tool
                         ProcessBuilder processBuilder = null;
                         if ( m_isWindows )
                         {
-                            processBuilder = new ProcessBuilder(m_pythonPath.getAbsolutePath(), m_generatorPy, "-s", automationFileName.getAbsolutePath() );
+                            processBuilder = new ProcessBuilder(m_pythonPath.getAbsolutePath(), m_generatorPy, "-s", "--arduino", automationFileName.getAbsolutePath() );
                         }
                         else
                         {
-                            processBuilder = new ProcessBuilder(m_generatorPy, "-s", automationFileName.getAbsolutePath() );
+                            processBuilder = new ProcessBuilder(m_generatorPy, "-s", "--arduino", automationFileName.getAbsolutePath() );
                         }
-                        processBuilder.directory ( sketch.prepareCodeFolder() );
+                        processBuilder.directory ( codeFolder );
                         processBuilder.redirectErrorStream ( true );
                         Process process =processBuilder.start();
                         inheritIO(process.getInputStream(), System.out);
@@ -121,7 +141,8 @@ public class SequantoAutomationTool implements Tool
                             code = includeLibLine + code;
                         }
 
-                        File generatedFileName = new File(sketch.prepareCodeFolder(), "automation_automation.c" );
+                        /*
+                        File generatedFileName = new File(codeFolder, "automation_automation.c" );
                         String includeLine = String.format("#include \"%s\"\n", generatedFileName.getAbsolutePath());
                         if ( !code.contains(includeLine) )
                         {
@@ -130,6 +151,8 @@ public class SequantoAutomationTool implements Tool
                                 includeLine +
                                 code.substring ( i + includeLibLine.length(), code.length() );
                         }
+                        */
+
                         if ( m_editor.getText() != code )
                         {
                             //System.out.println ( "Setting code to" );

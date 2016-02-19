@@ -25,7 +25,7 @@ IF(SQ_ARDUINO)
     SET(CMAKE_JAVA_COMPILE_FLAGS "-target" "1.5" "-source" "1.5")
 
     IF(SQ_ARDUINO_16)
-        ADD_JAR(SequantoAutomationTool tools/SequantoAutomationTool/src/SequantoAutomationTool.java INCLUDE_JARS "${SQ_ARDUINO_IDE_PATH}/lib/arduino-core.jar" "${SQ_ARDUINO_IDE_PATH}/lib/pde.jar")
+        ADD_JAR(SequantoAutomationTool tools/SequantoAutomationTool/src/SequantoAutomationTool.java INCLUDE_JARS "${SQ_ARDUINO_IDE_PATH}/lib/arduino-core.jar" "${SQ_ARDUINO_IDE_PATH}/lib/pde.jar" "${SQ_ARDUINO_IDE_PATH}/lib/commons-codec-1.7.jar")
     ELSE(SQ_ARDUINO_16)
         ADD_JAR(SequantoAutomationTool tools/SequantoAutomationTool/src/SequantoAutomationTool.java INCLUDE_JARS "${SQ_ARDUINO_IDE_PATH}/lib/core.jar" "${SQ_ARDUINO_IDE_PATH}/lib/pde.jar")
     ENDIF(SQ_ARDUINO_16)
