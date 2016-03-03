@@ -13,7 +13,7 @@
 #define _SQ_CONFIG_H_
 
 #define SQ_SCM_REVISION "????"
-#define CPACK_PACKAGE_VERSION "0.9.4"
+#define CPACK_PACKAGE_VERSION "0.9.5"
 #define CPACK_PACKAGE_VENDOR "CIM Software Testing A/S"
 
 #define SQ_USE_BSD_SOCKETS
