@@ -4,6 +4,7 @@
 
 #define SQ_ARDUINO
 #include "utility/src/config.h"
+#include "sequanto/automation.h"
 
 class SequantoAutomation
 {

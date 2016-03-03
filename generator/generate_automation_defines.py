@@ -681,11 +681,7 @@ class AutomationFile ( object ):
         fp.write ( '#ifdef HAVE_STDINT_H\n' )
         fp.write ( '#include <stdint.h>\n' )
         fp.write ( '#endif\n' )
-        fp.write ( '#include <sequanto/types.h>\n' )
-        fp.write ( '#include <sequanto/stream.h>\n' )
-        fp.write ( '#include <sequanto/value.h>\n' )
-        fp.write ( '#include <sequanto/protocol.h>\n' )
-        fp.write ( '#include <sequanto/server.h>\n' )
+        fp.write ( '#include <sequanto/automation.h>\n' )
         fp.write ( '\n' )
         fp.write ( '#include "%s_automation.h"\n' % (self.m_name) )
         fp.write ( '\n' )
@@ -872,11 +868,11 @@ class AutomationFile ( object ):
                                    property.automationType ) )
                 else:
                     if property.automationType == 'byte_array':
-                        fp.write ( '   %s ( _value->Value.m_byteArrayValue );\n' % (property.setFunction.name) )                                   
+                        fp.write ( '   %s ( _value->Value.m_byteArrayValue );\n' % (property.setFunction.name) )
                     else:
                         fp.write ( '   %s ( _value->Value.m_%sValue );\n'
                                    % (property.setFunction.name, property.automationType) )
-                
+
                 fp.write ( '}\n' )
                 fp.write ( '\n' )
 

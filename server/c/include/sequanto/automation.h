@@ -21,6 +21,7 @@
 #include <sequanto/types.h>
 #include <sequanto/stream.h>
 #include <sequanto/server.h>
+#include <sequanto/protocol.h>
 #include <sequanto/system.h>
 #include <sequanto/log.h>
 

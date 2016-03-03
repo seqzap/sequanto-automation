@@ -1,7 +1,13 @@
 #ifndef SQ_ARDUINO
 #include <sequanto/automation.h>
+#include <sequanto/thread.h>
 #include "config.h"
 #include "type_tests_automation.h"
+#endif
+
+#ifdef __cplusplus
+extern "C"
+{
 #endif
 
 typedef SQBool bool_t;
@@ -78,7 +84,7 @@ void type_test_reset ( void )
 signed long type_test_signed_long_get ( void )
 {
 #ifndef SQ_ARDUINO
-   sq_log_updated ( signedLongValue, "The value of signed long was queries" );
+   //sq_log_updated ( signedLongValue, "The value of signed long was queries" );
    sq_logf ( "Returning value of signed long: %i", signedLongValue );
 #endif
    return signedLongValue;
@@ -284,7 +290,7 @@ void type_test_unsigned_char_set ( unsigned char _value )
 #ifdef HAVE_INT64_T
 int64_t type_test_int64_t_get ( void )
 {
-   sq_log_updated ( int64_tValue, "The value of int64_t was queries" );
+   //sq_log_updated ( int64_tValue, "The value of int64_t was queries" );
    sq_logf ( "Returning value of signed long: %i", int64_tValue );
    return int64_tValue;
 }
@@ -385,7 +391,7 @@ void type_test_UINT16_set ( UINT16 _value )
 
 void type_test_SQByteArray_set ( SQByteArray * _value )
 {
-    int i = 0;
+    size_t i = 0;
     for ( ; i < _value->m_length && i < sizeof(s_byteArrayData); i++ )
     {
         s_byteArrayData[i] = _value->m_start[i];
@@ -394,7 +400,7 @@ void type_test_SQByteArray_set ( SQByteArray * _value )
 
 void type_test_const_SQByteArray_set ( const SQByteArray * _value )
 {
-    int i = 0;
+    size_t i = 0;
     for ( ; i < _value->m_length && i < sizeof(s_byteArrayData); i++ )
     {
         s_byteArrayData[i] = _value->m_start[i];
@@ -435,7 +441,7 @@ int main ( int argc, char * argv[] )
    sq_server_init ( &server, 4321 );
 
    type_test_init();
-   
+
    while ( SQ_TRUE )
    {
       if ( sq_thread_is_supported() )
@@ -459,3 +465,7 @@ int function_with_many_parameters ( int a0, int a1, int a2, int a3, int a4, int 
     return a0 + a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9
         +  b0 + b1 + b2 + b3 + b4 + b5 + b6 + b7 + b8 + b9;
 }
+
+#ifdef __cplusplus
+}
+#endif
