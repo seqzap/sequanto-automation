@@ -23,6 +23,7 @@
 */
 
 #include "SequantoAutomation.h"
+#include "code/automation_automation.h"
 #include <sequanto/types.h>
 #include <due_can.h>
 
@@ -50,6 +51,20 @@ extern "C"
   void init_can_device (int baud_rate)
   {
     Can0.init(baud_rate);
+
+    int filter;
+    // extended
+    for (filter = 0; filter < 3; filter++)
+    {
+      Can0.setRXFilter(filter, 0, 0, true);
+      Can1.setRXFilter(filter, 0, 0, true);
+    }  
+    //standard
+    for (int filter = 3; filter < 7; filter++) 
+    {
+      Can0.setRXFilter(filter, 0, 0, false);
+      Can1.setRXFilter(filter, 0, 0, false);
+    }  
   }
 
   int number_of_messages()
@@ -58,13 +73,14 @@ extern "C"
   }
 
   static CAN_FRAME s_frame;
-
+  static SQByteArray s_data;
+  
   SQBool pop_message()
   {
     if (Can0.rx_avail())
     {
       Can0.read(s_frame);
-      //s_data.m_length = s_frame.length;
+      s_data.m_length = s_frame.length;
       return SQ_TRUE;
     }
     else
@@ -93,31 +109,18 @@ extern "C"
     return s_frame.length;
   }
 
-  static char s_data[8 * 2 + 1];
-
-  const char * get_message_data()
+  const SQByteArray * get_message_data()
   {
-    int i;
-    for ( i; i < s_frame.length; i++ )
-    {
-      s_data[i] = '0' + s_frame.data.bytes[i] & 0x0F;
-      s_data[i + 1] = '0' + ((s_frame.data.bytes[i] & 0xF0) >> 4);
-    }
-    s_data[i * 2] = '\0';
-    return s_data;
-    //return sq_byte_array_create((SQByte*) &s_frame.data, s_frame.length);
-    //s_data.m_start = (SQByte*) &s_frame.data;
-    //s_data.m_length = 0;
-    //return &s_data;
+    return &s_data;
   }
 
-  void send_message(int _id, int _priority, SQBool _extended, SQByteArray * _data)
+  void send_message(int _id, int _priority, SQBool _extended, const SQByteArray * _data)
   {
     s_frame.id = _id;
     s_frame.priority = _priority;
     s_frame.extended = _extended;
     s_frame.length = _data->m_length;
-    for ( int i = 0; i++; i < _data->m_length )
+    for ( int i = 0; i < _data->m_length; i++ )
     {
       s_frame.data.bytes[i] = _data->m_start[i];
     }
@@ -127,6 +130,9 @@ extern "C"
 
 void setup() {
   s_frame.length = 0;
+  s_data.m_length = 0;
+  s_data.m_start = s_frame.data.bytes;
+  init_can_device(CAN_BPS_125K);
   SequantoAutomation::init();
 }
 
