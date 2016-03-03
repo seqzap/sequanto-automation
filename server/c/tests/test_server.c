@@ -26,6 +26,10 @@ void sq_parser_property_get ( SQParser * _parser, SQStream * _stream, const char
     {
         sq_stream_write_string ( _stream, "+12\r\n" );
     }
+    else if ( strcmp(_objectPath, "/this/is/a/byte_array") == 0 )
+    {
+        sq_stream_write_string ( _stream, "+0x11223344AABBCCDD\r\n" );
+    }
     else
     {
         sq_stream_write_string ( _stream, "- \"Unknown object!\"\r\n" );

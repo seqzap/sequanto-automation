@@ -1,8 +1,7 @@
 #ifndef SQ_ARDUINO
-#include <sequanto/types.h>
-#include <sequanto/log.h>
+#include <sequanto/automation.h>
 #include "config.h"
-#include "test_server_automation.h"
+#include "type_tests_automation.h"
 #endif
 
 typedef SQBool bool_t;
@@ -28,26 +27,34 @@ static double doubleValue;
 static SQBool boolValue;
 static bool_t bool_tValue;
 static UINT16 UINT16Value;
+static SQByte s_byteArrayData[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
+static SQByteArray s_byteArray;
+
+void type_test_init( void )
+{
+    signedLongValue = 0;
+    longValue = 0;
+    unsignedLongValue = 0;
+    signedIntegerValue = 0;
+    integerValue = 0;
+    unsignedIntegerValue = 0;
+    signedShortValue = 0;
+    shortValue = 0;
+    unsignedShortValue =0;
+    signedCharValue = 0;
+    charValue = 0;
+    unsignedCharValue = 0;
+    floatValue = 0;
+    doubleValue = 0;
+    boolValue = SQ_FALSE;
+    bool_tValue = 0;
+    UINT16Value = 0;
+    s_byteArray.m_length = sizeof(s_byteArrayData);
+    s_byteArray.m_start = s_byteArrayData;
+}
 
 void type_test_reset ( void )
 {
-   signedLongValue = 0;
-   longValue = 0;
-   unsignedLongValue = 0;
-   signedIntegerValue = 0;
-   integerValue = 0;
-   unsignedIntegerValue = 0;
-   signedShortValue = 0;
-   shortValue = 0;
-   unsignedShortValue =0;
-   signedCharValue = 0;
-   charValue = 0;
-   unsignedCharValue = 0;
-   floatValue = 0;
-   doubleValue = 0;
-   boolValue = SQ_FALSE;
-   bool_tValue = 0;
-   UINT16Value = 0;
 
    sq_type_tests_properties_signed_long_updated ( signedLongValue );
    sq_type_tests_properties_long_updated ( longValue );
@@ -373,4 +380,82 @@ void type_test_UINT16_set ( UINT16 _value )
 #endif
    UINT16Value = _value;
    sq_type_tests_properties_UINT16_updated ( UINT16Value );
+}
+
+
+void type_test_SQByteArray_set ( SQByteArray * _value )
+{
+    int i = 0;
+    for ( ; i < _value->m_length && i < sizeof(s_byteArrayData); i++ )
+    {
+        s_byteArrayData[i] = _value->m_start[i];
+    }
+}
+
+void type_test_const_SQByteArray_set ( const SQByteArray * _value )
+{
+    int i = 0;
+    for ( ; i < _value->m_length && i < sizeof(s_byteArrayData); i++ )
+    {
+        s_byteArrayData[i] = _value->m_start[i];
+    }
+}
+
+SQByteArray * type_test_SQByteArray_get ( void )
+{
+    return sq_byte_array_create_copy ( s_byteArrayData, sizeof(s_byteArrayData) );
+}
+
+const SQByteArray * type_test_const_SQByteArray_get ( void )
+{
+    return &s_byteArray;
+}
+
+
+#ifdef SQ_ARDUINO
+void setup ( void )
+{
+    SequantoAutomation::init();
+    type_test_init();
+}
+
+void loop ( void )
+{
+    SequantoAutomation::poll();
+}
+
+#else
+int main ( int argc, char * argv[] )
+{
+#ifndef SQ_DISABLE_AUTOMATION_INTERFACE
+   static SQServer server;
+
+   sq_init ();
+
+   sq_server_init ( &server, 4321 );
+
+   type_test_init();
+   
+   while ( SQ_TRUE )
+   {
+      if ( sq_thread_is_supported() )
+      {
+         sq_system_sleep ( 1000 );
+      }
+      sq_server_poll ( &server );
+   }
+
+   sq_shutdown ();
+#endif
+
+   SQ_UNUSED_PARAMETER(argc);
+   SQ_UNUSED_PARAMETER(argv);
+}
+#endif
+
+int function_with_many_parameters ( int a0, int a1, int a2, int a3, int a4, int a5, int a6, int a7, int a8, int a9,
+                                    int b0, int b1, int b2, int b3, int b4, int b5, int b6, int b7, int b8, int b9 )
+{
+    return a0 + a1 + a2 + a3 + a4 + a5 + a6 + a7 + a8 + a9
+        +  b0 + b1 + b2 + b3 + b4 + b5 + b6 + b7 + b8 + b9;
 }

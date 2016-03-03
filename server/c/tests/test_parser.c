@@ -121,7 +121,16 @@ START_TEST(test_parser_get_property)
     
     free ( output );
     
+
+    // GET a byte-array property
+    input_string ( &parser, "GET /this/is/a/byte_array\r\n" );
     
+    output = (char*) sq_stream_unit_test_pop_write ( test_stream );
+    
+    ck_assert_str_eq ( output, "+0x11223344AABBCCDD\r\n" );
+    
+    free ( output );
+
     // Cleanup
     
     sq_stream_close ( test_stream );

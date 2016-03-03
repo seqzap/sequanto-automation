@@ -1,13 +1,15 @@
 #
-# test_server
+# type_tests
 #
 
-SQ_GENERATE(test_server test_server.automation)
-ADD_EXECUTABLE(test_server test_server.c type_tests.c ${SQ_GENERATE_test_server})
+SQ_GENERATE(type_tests type_tests.automation)
+ADD_EXECUTABLE(type_tests  type_tests.c ${SQ_GENERATE_type_tests})
 
-ADD_SUBDIRECTORY(test_server_disabled)
+ADD_SUBDIRECTORY(type_tests_disabled)
 
-TARGET_LINK_LIBRARIES(test_server SequantoAutomation)
+TARGET_LINK_LIBRARIES(type_tests SequantoAutomation)
+
+ADD_CUSTOM_TARGET(run_type_tests ./type_tests DEPENDS type_tests)
 
 IF(UNIX)
   SQ_GENERATE(liab_test liab_test.automation)
@@ -16,5 +18,5 @@ IF(UNIX)
 ENDIF(UNIX)
 
 IF(SQ_ARDUINO)
-    SQ_GENERATE_INO(test_server test_server.automation test_server.c type_tests.c)
+    SQ_GENERATE_INO(type_tests type_tests.automation type_tests.c)
 ENDIF(SQ_ARDUINO)
