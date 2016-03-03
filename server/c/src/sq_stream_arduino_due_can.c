@@ -24,6 +24,9 @@
 
 #include <due_can.h>
 
+// Uncomment the next line to get the frames sent and received written on the serial port
+//#define SQ_ARDUINO_DUE_DEBUG
+
 typedef struct _SQStream
 {
     SQStreamDataReceivedFunction m_handler;
@@ -39,20 +42,6 @@ SQStream * sq_stream_open ( int _portNumber )
 {
    Can0.init(SQ_ARDUINO_CAN_BAUD_RATE);
    Can0.watchFor();
-
-   /*
-   int filter;
-   // extended
-   for (filter = 0; filter < 3; filter++)
-   {
-     Can0.setRXFilter(filter, 0, 0, true);
-   }
-   //standard
-   for (filter = 3; filter < 7; filter++)
-   {
-     Can0.setRXFilter(filter, 0, 0, false);
-     }*/
-
    s_dataIndex = 0;
    s_frame.length = 0;
    s_sendFrame.id = SQ_ARDUINO_CAN_ID;
@@ -85,7 +74,9 @@ size_t sq_stream_data_available ( SQStream * _stream )
    {
       if (Can0.rx_avail())
       {
+#ifdef SQ_ARDUINO_DUE_DEBUG
          Serial.println(" RX");
+#endif
          Can0.read(s_frame);
          s_dataIndex = 0;
          return s_frame.length;
@@ -106,7 +97,9 @@ SQBool sq_stream_read_byte ( SQStream * _stream, SQByte * _byte )
    if ( s_dataIndex < s_frame.length )
    {
       *_byte  = s_frame.data.bytes[s_dataIndex];
+#ifdef SQ_ARDUINO_DUE_DEBUG
       Serial.print((char) *_byte);
+#endif
       s_dataIndex++;
       return SQ_TRUE;
    }
@@ -118,11 +111,13 @@ SQBool sq_stream_read_byte ( SQStream * _stream, SQByte * _byte )
 
 static void can0_send()
 {
+#ifdef SQ_ARDUINO_DUE_DEBUG
    size_t i;
    for ( i = 0; i < s_sendFrame.length; i++ )
    {
       Serial.print((char) s_sendFrame.data.bytes[i]);
    }
+#endif
    bool sent = false;
    do
    {
@@ -137,36 +132,6 @@ SQBool sq_stream_write_string ( SQStream * _stream, const char * const _string )
    {
       sq_stream_write_byte(_stream, _string[i]);
    }
-   /*
-   size_t i;
-   size_t stringIndex = 0;
-   size_t left = strlen(_string);
-   while ( left > 0 )
-   {
-      if ( left > 8 )
-      {
-         s_sendFrame.length = 8;
-         for ( i = 0; i < 8; i++ )
-         {
-            s_sendFrame.data.bytes[i] = _string[stringIndex];
-            stringIndex++;
-         }
-         can0_send();
-         left -= 8;
-      }
-      else
-      {
-         s_sendFrame.length = left;
-         for ( i = 0; i < left; i++ )
-         {
-            s_sendFrame.data.bytes[i] = _string[stringIndex];
-            stringIndex++;
-         }
-         can0_send();
-         left = 0;
-      }
-   }
-   */
    return SQ_TRUE;
 }
 
@@ -194,7 +159,9 @@ SQBool sq_stream_write_byte ( SQStream * _stream, SQByte _byte )
 
 void sq_stream_enter_write ( SQStream * _stream )
 {
+#ifdef SQ_ARDUINO_DUE_DEBUG
    Serial.print(" TX ");
+#endif
    s_sendIndex = 0;
 }
 
