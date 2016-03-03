@@ -60,7 +60,7 @@ SQByteArray * sq_byte_array_create ( SQByte * _start, size_t _length )
 SQByteArray * sq_byte_array_create_copy ( SQByte * _start, size_t _length )
 {
     SQByteArray * ret = sq_byte_array_create_prealloc ( _length );
-    memcpy ( _start, ret->m_start, _length );
+    memcpy ( ret->m_start, _start, _length );
     return ret;
 }
 
