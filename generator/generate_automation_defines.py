@@ -421,7 +421,7 @@ class AutomationFile ( object ):
                     'float', 'double',
                     'bool', 'SQBool',
                     'void',
-                    'SQByteArray *']:
+                    'SQByteArray *', 'const SQByteArray *']:
             return type
         elif type in self.m_typedefs_c_name:
             return self.getRecognizedCType(self.m_typedefs_c_name[type])
@@ -440,7 +440,7 @@ class AutomationFile ( object ):
             return 'boolean'
         elif type == 'void':
             return 'void'
-        elif type == 'SQByteArray *':
+        elif type in ['SQByteArray *', 'const SQByteArray *']:
             return 'byte_array'
         elif type in self.m_typedefs:
             return self.m_typedefs[type]
@@ -871,9 +871,12 @@ class AutomationFile ( object ):
                                % ( property.setFunction.name, ', '.join(property.smartValues),
                                    property.automationType ) )
                 else:
-                    fp.write ( '   %s ( _value->Value.m_%sValue );\n'
-                               % (property.setFunction.name, property.automationType) )
-
+                    if property.automationType == 'byte_array':
+                        fp.write ( '   %s ( _value->Value.m_byteArrayValue );\n' % (property.setFunction.name) )                                   
+                    else:
+                        fp.write ( '   %s ( _value->Value.m_%sValue );\n'
+                                   % (property.setFunction.name, property.automationType) )
+                
                 fp.write ( '}\n' )
                 fp.write ( '\n' )
 
