@@ -9,7 +9,11 @@ ADD_SUBDIRECTORY(type_tests_disabled)
 
 TARGET_LINK_LIBRARIES(type_tests SequantoAutomation)
 
-ADD_CUSTOM_TARGET(run_type_tests ./type_tests DEPENDS type_tests)
+#get_filename_component(type_tests_LOCATION "$<TARGET_FILE:type_tests>" ABSOLUTE)
+#FILE(TO_NATIVE_PATH "$<TARGET_FILE:type_tests>" type_tests_LOCATION)
+#SET(type_tests_LOCATION "$<TARGET_FILE:type_tests> $<TARGET_FILE:type_tests>")
+ADD_CUSTOM_TARGET(run_type_tests "$<TARGET_FILE:type_tests>" DEPENDS type_tests WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+#ADD_CUSTOM_TARGET(run_type_tests "type_tests" DEPENDS type_tests WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 IF(UNIX)
   SQ_GENERATE(liab_test liab_test.automation)
