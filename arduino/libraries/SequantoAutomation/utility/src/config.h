@@ -123,7 +123,7 @@ char * sq_internal_strdup ( const char * _value );
 #   define HAVE_DTOSTRF
 #endif
 #define SQ_ARDUINO_CAN_BAUD_RATE 125000
-#define SQ_ARDUINO_CAN_ID 1234
+#define SQ_ARDUINO_CAN_ID 4321
 #endif
 
 #endif /* _sq_CONFIG_H_ */
