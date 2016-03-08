@@ -35,7 +35,7 @@
 /* #undef HAVE_INT64_T */
 /* #undef SQ_WIN32 */
 #define SQ_UNIX
-//#define SQ_ARDUINO
+#define SQ_ARDUINO
 #define SQ_LOGGING_ENABLED
 #define SQ_C_SUPPORTS_INLINE
 #define SQ_USE_ASSERT
