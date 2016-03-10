@@ -12,9 +12,9 @@
 #ifndef _SQ_CONFIG_H_
 #define _SQ_CONFIG_H_
 
-#define SQ_SCM_REVISION "????"
-#define CPACK_PACKAGE_VERSION "0.9.5"
-#define CPACK_PACKAGE_VENDOR "CIM Software Testing A/S"
+#define SQ_SCM_REVISION "${SQ_SCM_REVISION}"
+#define CPACK_PACKAGE_VERSION "${CPACK_PACKAGE_VERSION}"
+#define CPACK_PACKAGE_VENDOR "${CPACK_PACKAGE_VENDOR}"
 
 #define SQ_USE_BSD_SOCKETS
 /* #undef SQ_USE_WINSOCK */
@@ -34,9 +34,9 @@
 #define HAVE_SYS_SOCKET_H
 /* #undef HAVE_INT64_T */
 /* #undef SQ_WIN32 */
-#define SQ_UNIX
+/* #define SQ_UNIX */
 #define SQ_ARDUINO
-#define SQ_LOGGING_ENABLED
+/* #define SQ_LOGGING_ENABLED */
 #define SQ_C_SUPPORTS_INLINE
 #define SQ_USE_ASSERT
 /* #undef SQ_BUILD_SHARED_LIBRARIES */

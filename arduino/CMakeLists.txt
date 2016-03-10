@@ -36,6 +36,8 @@ IF(SQ_ARDUINO)
     MESSAGE(STATUS "Jar file ${_jarFile}")
     MESSAGE(STATUS "Class compiled to ${_classDir}")
 
+    CONFIGURE_FILE(libraries/SequantoAutomation/utility/src/config.h.in "${SQ_ARDUINO_OUTPUT}/libraries/SequantoAutomation/utility/src/config.h")
+
     ADD_CUSTOM_COMMAND(TARGET SequantoAutomationTool POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy "${_jarFile}" "${SQ_ARDUINO_OUTPUT}/tools/SequantoAutomationTool/tool/SequantoAutomationTool.jar")
 
