@@ -89,7 +89,7 @@ SQ_DECL SQByteArray * sq_byte_array_clone ( SQByteArray * _array );
  */
 SQ_DECL void sq_byte_array_free ( SQByteArray * _array, SQBool _alsoFreeData );
 
-#ifdef SQ_ARDUINO
+#if defined SQ_ARDUINO && !defined SQ_ARDUINO_SAM
 #   include <avr/pgmspace.h>
 #   define SQ_STRING_CONSTANT(str) PSTR(str)
 #   define SQ_STRING_CONSTANT_FROM_ARRAY(constStr) ((PGM_P) pgm_read_word((constStr)))

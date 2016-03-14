@@ -7,7 +7,7 @@ static const char OBJECT_IS_NOT_A_CALLABLE[] SQ_CONST_VARIABLE = "Object is not 
 static const char OBJECT_IS_NOT_A_MONITOR[] SQ_CONST_VARIABLE = "Object is not a monitor.";
 static const char PLUS_INFO_SPACE[] SQ_CONST_VARIABLE = "+INFO ";
 
-#ifdef SQ_ARDUINO
+#if defined SQ_ARDUINO && !defined SQ_ARDUINO_SAM
 static SQInfo bufferedInfo;
 static SQCallableInfo bufferedCallableInfo;
 static SQPropertyInfo bufferedPropertyInfo;
