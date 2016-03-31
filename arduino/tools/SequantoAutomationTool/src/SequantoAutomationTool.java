@@ -54,12 +54,12 @@ public class SequantoAutomationTool implements Tool
             for ( File root : File.listRoots() )
             {
                 File[] files = root.listFiles(new FileFilter()
-                {
-                    public boolean accept(File f)
                     {
-                        return f.getName().toLowerCase().startsWith("python");
-                    }
-                } );
+                        public boolean accept(File f)
+                        {
+                            return f.getName().toLowerCase().startsWith("python");
+                        }
+                    } );
                 if ( files != null )
                 {
                     for ( File directory : files )
@@ -83,20 +83,28 @@ public class SequantoAutomationTool implements Tool
 
     public void run()
     {
-        try
+        if ( !new File(m_generatorPy).exists() )
         {
-            if ( !new File(m_generatorPy).exists() )
-            {
-                Base.showMessage ( "ERROR", String.format("Could not find generator python script at %s", m_generatorPy) );
-            }
-            Sketch sketch = m_editor.getSketch();
-            if ( sketch.isModified() )
+            Base.showMessage ( "ERROR", String.format("Could not find generator python script at %s", m_generatorPy) );
+        }
+        Sketch sketch = m_editor.getSketch();
+        if ( sketch.isModified() )
+        {
+            try
             {
                 sketch.save();
             }
-            //String sketchName = sketch.getName();
-            //SketchCode codeObject = sketch.getCurrentCode();
-            //String code = codeObject.getProgram();
+            catch ( java.io.IOException ex )
+            {
+                //Base.showMessage("ERROR", "Could not save sketch before trying to generate." );
+            }
+        }
+
+        //String sketchName = sketch.getName();
+        //SketchCode codeObject = sketch.getCurrentCode();
+        //String code = codeObject.getProgram();
+        try
+        {
             String code = m_editor.getText();
             int start = code.indexOf ( "BEGIN AUTOMATION" );
             if ( start != -1 )
@@ -118,6 +126,7 @@ public class SequantoAutomationTool implements Tool
                     writer.write ( "import " + sketch.getMainFilePath().toString() + "\n" );
                     writer.write ( automationCode );
                     writer.close();
+
                     try
                     {
                         ProcessBuilder processBuilder = null;
@@ -142,15 +151,15 @@ public class SequantoAutomationTool implements Tool
                         }
 
                         /*
-                        File generatedFileName = new File(codeFolder, "automation_automation.c" );
-                        String includeLine = String.format("#include \"%s\"\n", generatedFileName.getAbsolutePath());
-                        if ( !code.contains(includeLine) )
-                        {
-                            int i = code.indexOf(includeLibLine);
-                            code = code.substring(0, i + includeLibLine.length()) +
-                                includeLine +
-                                code.substring ( i + includeLibLine.length(), code.length() );
-                        }
+                          File generatedFileName = new File(codeFolder, "automation_automation.c" );
+                          String includeLine = String.format("#include \"%s\"\n", generatedFileName.getAbsolutePath());
+                          if ( !code.contains(includeLine) )
+                          {
+                          int i = code.indexOf(includeLibLine);
+                          code = code.substring(0, i + includeLibLine.length()) +
+                          includeLine +
+                          code.substring ( i + includeLibLine.length(), code.length() );
+                          }
                         */
 
                         String includeLine = String.format("#include \"code/automation_automation.h\"\n");
@@ -158,8 +167,8 @@ public class SequantoAutomationTool implements Tool
                         {
                             int i = code.indexOf(includeLibLine);
                             code = code.substring(0, i + includeLibLine.length()) +
-                                includeLine +
-                                code.substring ( i + includeLibLine.length(), code.length() );
+                               includeLine +
+                               code.substring ( i + includeLibLine.length(), code.length() );
                         }
 
                         if ( m_editor.getText() != code )
@@ -197,7 +206,7 @@ public class SequantoAutomationTool implements Tool
         }
         catch ( java.io.IOException ex )
         {
-            Base.showMessage("ERROR", "Could not save sketch before trying to generate." );
+            Base.showMessage("ERROR", String.format("IO Error: %s.", ex) );
         }
     }
 
