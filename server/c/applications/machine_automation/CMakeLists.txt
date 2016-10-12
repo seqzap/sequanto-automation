@@ -4,22 +4,37 @@ IF(NOT SQ_ARDUINO)
 
   IF(SQ_QT_MACHINE_AUTOMATION)
     LIST(APPEND SOURCES_WITHOUT_GENERATED windows_qt.cxx)
-        
+
     QT4_WRAP_CPP(SequantoAutomation_QT_APPLICATION_MACHINE_AUTOMATION_EVENT_FILTER_MOC QtApplicationMachineAutomationEventFilter.h)
-    
+
     LIST(APPEND SOURCES_WITHOUT_GENERATED QtApplicationMachineAutomationEventFilter.cxx)
     LIST(APPEND SOURCES_WITHOUT_GENERATED ${SequantoAutomation_QT_APPLICATION_MACHINE_AUTOMATION_EVENT_FILTER_MOC})
-    
+
     INCLUDE_DIRECTORIES(../../../qt/include)
-    
+
     LIST(APPEND SOURCES_WITHOUT_GENERATED QtMachineAutomationEvent.cxx)
   ENDIF(SQ_QT_MACHINE_AUTOMATION)
-  
-  IF(SQ_WIN32)  
+
+  IF(SQ_WIN32)
     LIST(APPEND SOURCES_WITHOUT_GENERATED process_win32.c)
-    
+    INCLUDE(FindWindowsSDK)
+    IF(WINDOWSSDK_FOUND)
+        #MESSAGE("Using found Windows SDK ${WINDOWSSDK_PREFERRED_DIR}")
+        SET(SQ_WINDOWS_SDK_DIR "${WINDOWSSDK_PREFERRED_DIR}" CACHE PATH "Path to Windows SDK to use for windows related headers.")
+    ENDIF(WINDOWSSDK_FOUND)
+
     IF(NOT SQ_QT_MACHINE_AUTOMATION)
-      LIST(APPEND SOURCES_WITHOUT_GENERATED windows_win32_oleacc.c)
+      MESSAGE("Compiling using Windows SDK ${SQ_WINDOWS_SDK_DIR}")
+      get_windowssdk_include_dirs(${SQ_WINDOWS_SDK_DIR} SQ_WINDOWS_SDK_INCLUDE_DIR)
+      MESSAGE("Using Windows SDK include dir ${SQ_WINDOWS_SDK_INCLUDE_DIR}")
+      INCLUDE_DIRECTORIES(${SQ_WINDOWS_SDK_INCLUDE_DIR})
+
+
+        MESSAGE("Found UIAutomationClient.h - using that.")
+      ELSE()
+        MESSAGE("Did not find UIAutomationClient.h - using ole-acc interface.")
+        LIST(APPEND SOURCES_WITHOUT_GENERATED windows_win32_oleacc.c)
+      ENDIF()
       LIST(APPEND SOURCES_WITHOUT_GENERATED mouse_win32.c)
     ENDIF(NOT SQ_QT_MACHINE_AUTOMATION)
   ELSE(SQ_WIN32)
@@ -28,10 +43,10 @@ IF(NOT SQ_ARDUINO)
     PKG_CHECK_MODULES(CSPI1 cspi-1.0)
     PKG_CHECK_MODULES(ATSPI2 glib-2.0 atspi-2 gobject-2.0)
     FIND_PACKAGE(X11)
-    CHECK_INCLUDE_FILE(HAVE_XTEST X11/extentions/Xtest.h)
-    
+    CHECK_INCLUDE_FILE(X11/extentions/Xtest.h HAVE_XTEST)
+
     LIST(APPEND SOURCES_WITHOUT_GENERATED process_linux.c)
-    
+
     IF(NOT SQ_QT_MACHINE_AUTOMATION)
       IF(ATSPI2_FOUND)
         INCLUDE_DIRECTORIES(${ATSPI2_INCLUDE_DIRS})
@@ -50,7 +65,7 @@ IF(NOT SQ_ARDUINO)
           LIST(APPEND SOURCES_WITHOUT_GENERATED windows.c)
         ENDIF(CSPI1_FOUND)
       ENDIF(ATSPI2_FOUND)
-      
+
       IF(X11_FOUND)
         LIST(APPEND SOURCES_WITHOUT_GENERATED windows_capture_screen_x11.c)
         IF(HAVE_XTEST)
@@ -62,35 +77,35 @@ IF(NOT SQ_ARDUINO)
         LIST(APPEND SOURCES_WITHOUT_GENERATED windows_capture_screen.c)
         LIST(APPEND SOURCES_WITHOUT_GENERATED mouse.c)
       ENDIF(X11_FOUND)
-      
+
     ENDIF(NOT SQ_QT_MACHINE_AUTOMATION)
   ENDIF(SQ_WIN32)
 
   SET(SOURCES ${SOURCES_WITHOUT_GENERATED} ${SQ_GENERATE_machine})
-    
+
   IF(SQ_QT_MACHINE_AUTOMATION)
     FIND_PACKAGE(Qt4 COMPONENTS QtCore QtGui QtNetwork REQUIRED)
     INCLUDE(${QT_USE_FILE})
-    
+
     ADD_LIBRARY(machine_automation ${SOURCES})
     IF(NOT QT4_FOUND)
       ERROR("QT4 must be found for the SQ_QT_MACHINE_AUTOMATION flag to be set.")
     ENDIF(NOT QT4_FOUND)
-    
+
     INCLUDE(${QT_USE_FILE})
-    
+
     TARGET_LINK_LIBRARIES(machine_automation ${QT_LIBRARIES})
 
     QT4_WRAP_CPP(qt_automation_MAINWIN_MOC qt_automation/mainwin.h)
     QT4_WRAP_UI(qt_automation_UIS_H qt_automation/mainwin.ui)
 #    INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/server/c/include)
     INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-    
+
     ADD_EXECUTABLE(qt_automation_example ${qt_automation_UIS_H} ${qt_automation_MAINWIN_MOC} qt_automation/mainwin.cpp qt_automation/qt_machine_automation.cpp)
     TARGET_LINK_LIBRARIES(qt_automation_example SequantoAutomation)
     TARGET_LINK_LIBRARIES(qt_automation_example machine_automation)
     TARGET_LINK_LIBRARIES(qt_automation_example ${QT_LIBRARIES})
-    
+
     IF(SQ_GENERATE_QMAKE)
       FILE(APPEND ${CMAKE_BINARY_DIR}/machine-automation.pro "# Machine Automation files\n")
       FILE(APPEND ${CMAKE_BINARY_DIR}/machine-automation.pro "MACHINE_AUTOMATION_SRCS=${SOURCES_REPLACED} \\\n")
@@ -126,13 +141,14 @@ IF(NOT SQ_ARDUINO)
     ENDIF(SQ_GENERATE_QMAKE)
   ELSE(SQ_QT_MACHINE_AUTOMATION)
     ADD_EXECUTABLE(machine_automation main.c ${SOURCES})
-    
+
     ADD_CUSTOM_TARGET(runserver ./machine_automation DEPENDS machine_automation)
   ENDIF(SQ_QT_MACHINE_AUTOMATION)
-  
+
   TARGET_LINK_LIBRARIES(machine_automation SequantoAutomation)
-  
-  IF(SQ_WIN32)  
+  INSTALL(TARGETS machine_automation DESTINATION .)
+
+  IF(SQ_WIN32)
     TARGET_LINK_LIBRARIES(machine_automation psapi)
     TARGET_LINK_LIBRARIES(machine_automation oleacc)
   ELSE(SQ_WIN32)
