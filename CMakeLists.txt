@@ -9,6 +9,7 @@ SET(CPACK_PACKAGE_VENDOR "CIM Software Testing A/S")
 SET(CPACK_DEBIAN_PACKAGE_MAINTAINER "Rasmus Toftdahl Olesen <rto@cim.as>")
 SET(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
 SET(CPACK_NSIS_URL_INFO_ABOUT "https://github.com/seqzap/sequanto-automation#readme")
+SET(CPACK_PACKAGE_EXECUTABLES "machine_automation" "Machine Automation Server")
 
 INCLUDE(CPack)
 

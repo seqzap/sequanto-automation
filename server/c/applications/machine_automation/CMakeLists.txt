@@ -149,7 +149,7 @@ IF(NOT SQ_ARDUINO)
   ENDIF(SQ_QT_MACHINE_AUTOMATION)
 
   TARGET_LINK_LIBRARIES(machine_automation SequantoAutomation)
-  INSTALL(TARGETS machine_automation DESTINATION .)
+  INSTALL(TARGETS machine_automation DESTINATION bin)
 
   IF(SQ_WIN32)
     TARGET_LINK_LIBRARIES(machine_automation psapi)
