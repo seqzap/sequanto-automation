@@ -29,8 +29,11 @@ IF(NOT SQ_ARDUINO)
       MESSAGE("Using Windows SDK include dir ${SQ_WINDOWS_SDK_INCLUDE_DIR}")
       INCLUDE_DIRECTORIES(${SQ_WINDOWS_SDK_INCLUDE_DIR})
 
+      CHECK_INCLUDE_FILE(UIAutomationClient.h HAVE_UIAUTOMATIONCLIENT)
 
+      IF(HAVE_UIAUTOMATIONCLIENT)
         MESSAGE("Found UIAutomationClient.h - using that.")
+        LIST(APPEND SOURCES_WITHOUT_GENERATED windows_win32_uiautomationclient.cxx)
       ELSE()
         MESSAGE("Did not find UIAutomationClient.h - using ole-acc interface.")
         LIST(APPEND SOURCES_WITHOUT_GENERATED windows_win32_oleacc.c)
