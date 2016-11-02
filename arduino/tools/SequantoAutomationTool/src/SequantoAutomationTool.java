@@ -172,6 +172,12 @@ public class SequantoAutomationTool implements Tool
                                code.substring ( i + includeLibLine.length(), code.length() );
                         }
 
+                        String includeCodeLine = String.format("\n#include \"code/automation_automation.c\"\n");
+                        if ( !code.contains(includeCodeLine) )
+                        {
+                            code = code + includeCodeLine;
+                        }
+
                         if ( m_editor.getCurrentTab().getText() != code )
                         {
                             //System.out.println ( "Setting code to" );
