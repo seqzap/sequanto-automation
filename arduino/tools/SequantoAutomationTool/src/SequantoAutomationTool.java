@@ -105,7 +105,8 @@ public class SequantoAutomationTool implements Tool
         //String code = codeObject.getProgram();
         try
         {
-            String code = m_editor.getText();
+            String code = m_editor.getCurrentTab().getText();
+            //String code = m_editor.getText();
             int start = code.indexOf ( "BEGIN AUTOMATION" );
             if ( start != -1 )
             {
@@ -171,13 +172,13 @@ public class SequantoAutomationTool implements Tool
                                code.substring ( i + includeLibLine.length(), code.length() );
                         }
 
-                        if ( m_editor.getText() != code )
+                        if ( m_editor.getCurrentTab().getText() != code )
                         {
                             //System.out.println ( "Setting code to" );
                             //System.out.println ( code );
                             //System.out.println ( "Current text was" );
                             //System.out.println ( m_editor.getText() );
-                            m_editor.setText ( code );
+                            m_editor.getCurrentTab().setText ( code );
                         }
 
                         if ( result == 0 )
