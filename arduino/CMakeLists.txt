@@ -30,6 +30,14 @@ IF(SQ_ARDUINO)
         ADD_JAR(SequantoAutomationTool tools/SequantoAutomationTool/src/SequantoAutomationTool.java INCLUDE_JARS "${SQ_ARDUINO_IDE_PATH}/lib/core.jar" "${SQ_ARDUINO_IDE_PATH}/lib/pde.jar")
     ENDIF(SQ_ARDUINO_16)
 
+    MESSAGE(STATUS "SequantoAutomation version: ${CPACK_PACKAGE_VERSION}")
+
+    FILE(STRINGS ${SQ_ARDUINO_IDE_PATH}/revisions.txt SQ_ARDUINO_IDE_REVISIONS
+      LIMIT_COUNT 1)
+
+    STRING(REGEX REPLACE "^ARDUINO ([0-9\\.]+).*" "\\1" SQ_ARDUINO_IDE_VERSION "${SQ_ARDUINO_IDE_REVISIONS}")
+    MESSAGE(STATUS "Arduino IDE version: ${SQ_ARDUINO_IDE_VERSION}")
+
     GET_TARGET_PROPERTY(_jarFile SequantoAutomationTool JAR_FILE)
     GET_TARGET_PROPERTY(_classDir SequantoAutomationTool CLASSDIR)
 
