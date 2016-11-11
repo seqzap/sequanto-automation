@@ -1,3 +1,5 @@
+#include "SequantoAutomation.h"
+#include "code/automation_automation.h"
 /* To try this example use the menu item:
  *
  *     Tools->Generate Automation
@@ -7,7 +9,6 @@
  * BEGIN AUTOMATION
  *
  * name arduino_io
- * import main.c
  * property /sequanto_automation_version sequanto_automation_version
  *
  * property /digital/(2..13)/direction digital_direction_get digital_direction_set
@@ -246,3 +247,5 @@ void loop ( void )
         }
     }
 }
+#include "code/automation_automation.c"
+
