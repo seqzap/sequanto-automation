@@ -11,12 +11,12 @@
  * name arduino_io
  * property /sequanto_automation_version sequanto_automation_version
  *
- * property /digital/(2..13)/direction digital_direction_get digital_direction_set
- * property /digital/(2..13)/pin digital_pin_get digital_pin_set
- * property /digital/(2..13)/counter digital_counter_get digital_counter_set
- * property /digital/(2..13)/counter_enabled digital_counter_enabled_get digital_counter_enabled_set
- * property /digital/(2..13)/count_on_high2low digital_counter_high2low_get digital_counter_high2low_set
- * property /digital/(2..13)/count_on_low2high digital_counter_low2high_get digital_counter_low2high_set
+ * property /digital/(2..54)/direction digital_direction_get digital_direction_set
+ * property /digital/(2..54)/pin digital_pin_get digital_pin_set
+ * #property /digital/(2..54)/counter digital_counter_get digital_counter_set
+ * #property /digital/(2..54)/counter_enabled digital_counter_enabled_get digital_counter_enabled_set
+ * #property /digital/(2..54)/count_on_high2low digital_counter_high2low_get digital_counter_high2low_set
+ * #property /digital/(2..54)/count_on_low2high digital_counter_low2high_get digital_counter_low2high_set
  *
  * # property /digital/(0..14)/mode digital_mode_get digital_mode_set
  * # property /digital/(0..14)/counter digital_counter_get digital_counter_set
@@ -31,8 +31,11 @@
 
 /* Skip the first two pins, they are used by the USB port for communication. */
 #define PIN_OFFSET 2
-#define NUMBER_OF_PINS 14
-#define IO_MASK 0x3FFC
+#ifdef  ARDUINO_AVR_MEGA2560
+#define NUMBER_OF_PINS 54
+#else
+#define NUMBER_OF_PINS 13
+#endif
 
 static char buff[10];
 
@@ -48,34 +51,25 @@ enum DIGITAL_PIN_DIRECTION {
 };
 
 static int s_counters[NUMBER_OF_PINS];
-
-
-static unsigned int io_direction = 0;   // All input on startup; for safety reasons.
-static unsigned int io_last_read = IO_MASK; // Pull-up on all; all high on startup.
-static unsigned int io_last_written = 0;    // Pull-up on all; all high on startup.
-static unsigned int io_counter_enable = 0;  // No counters enabled
-static unsigned int io_trig_h2l = IO_MASK;  // default counter edge
-static unsigned int io_trig_l2h = 0;
+static SQBool io_direction[NUMBER_OF_PINS];
+static SQBool io_last_read[NUMBER_OF_PINS];
+static SQBool io_last_written[NUMBER_OF_PINS];
+static SQBool io_counter_enable[NUMBER_OF_PINS];
+static SQBool io_trig_h2l[NUMBER_OF_PINS];
+static SQBool io_trig_l2h[NUMBER_OF_PINS];
 
 static const char DIGITAL_PIN_INPUT_TEXT[] SQ_CONST_VARIABLE = "Input";
 static const char DIGITAL_PIN_OUTPUT_TEXT[] SQ_CONST_VARIABLE = "Output";
 
-void update_direction_mask( void )
-{
-    io_direction = (DDRD | (((unsigned int)DDRB) << 8 )) & IO_MASK;
-}
-
-#define PIN_MASK(pin) (((unsigned int)1) << pin)
-
 SQBool digital_pin_get ( int _pin )
 {
-    if ((io_direction& PIN_MASK(_pin)) != 0)
+    if ( io_direction[_pin] == SQ_TRUE )
     {
-        return ((io_last_written & PIN_MASK(_pin)) != 0);
+      return io_last_written[_pin];
     }
     else
     {
-        return ((io_last_read & PIN_MASK(_pin)) != 0);
+      return io_last_read[_pin];
     }
 }
 
@@ -84,7 +78,7 @@ void digital_pin_set ( int _pin, SQBool _value )
     //if ((io_direction& PIN_MASK(_pin)) != 0)
     {
         digitalWrite ( _pin, _value == SQ_TRUE ? HIGH : LOW );
-        io_last_written = (io_last_written & (~(PIN_MASK(_pin)))) | (_value >> _pin);
+        io_last_written[_pin] = _value;
         //sq_digital_pin_updated ( _pin, _value );
     }
     /*
@@ -97,8 +91,7 @@ void digital_pin_set ( int _pin, SQBool _value )
 
 const char * digital_direction_get ( int _pin )
 {
-    update_direction_mask();
-    if ( io_direction & PIN_MASK(_pin) )
+    if ( io_direction[_pin] == SQ_TRUE )
     {
         sq_get_constant_string_copy(DIGITAL_PIN_OUTPUT_TEXT, buff);
     }
@@ -133,14 +126,15 @@ void digital_direction_set ( int _pin, const char * _mode )
         /* Set pull-up resistor. */
         digitalWrite ( _pin, HIGH );
         //sq_digital_pin_updated ( _pin, digital_pin_get(_pin) );
+        io_direction[_pin] = SQ_FALSE;
         break;
 
     case DIGITAL_PIN_OUTPUT:
         pinMode ( _pin, OUTPUT );
         digitalWrite ( _pin, LOW );
+        io_direction[_pin] = SQ_TRUE;
         break;
     }
-    update_direction_mask();
 }
 
 int digital_counter_get ( int _pin )
@@ -155,35 +149,32 @@ void digital_counter_set ( int _pin, int _counter )
 
 SQBool digital_counter_enabled_get ( int _pin )
 {
-    return ((io_counter_enable & PIN_MASK(_pin)) != 0) ? SQ_TRUE : SQ_FALSE;
+    return io_counter_enable[_pin];
 }
 
 void digital_counter_enabled_set ( int _pin, SQBool _value )
 {
-    unsigned int mask = PIN_MASK(_pin);
-    io_counter_enable = (io_counter_enable & ~mask) | ((_value == SQ_TRUE) ? mask : 0);
+    io_counter_enable[_pin] = _value;
 }
 
 SQBool digital_counter_high2low_get ( int _pin )
 {
-    return ((io_trig_h2l & PIN_MASK(_pin)) != 0) ? SQ_TRUE : SQ_FALSE;
+    return io_trig_h2l[_pin];
 }
 
 void digital_counter_high2low_set ( int _pin, SQBool _value )
 {
-    unsigned int mask = PIN_MASK(_pin);
-    io_trig_h2l= (io_trig_h2l & ~mask) | ((_value == SQ_TRUE) ? mask : 0);
+    io_trig_h2l[_pin] = _value;
 }
 
 SQBool digital_counter_low2high_get ( int _pin )
 {
-    return ((io_trig_l2h & PIN_MASK(_pin)) != 0) ? SQ_TRUE : SQ_FALSE;
+    return io_trig_l2h[_pin];
 }
 
 void digital_counter_low2high_set ( int _pin, SQBool _value )
 {
-    unsigned int mask = PIN_MASK(_pin);
-    io_trig_l2h = (io_trig_l2h & ~mask) | ((_value == SQ_TRUE) ? mask : 0);
+    io_trig_l2h[_pin] = _value;
 }
 
 int analog_in_get_value ( int _pin )
@@ -218,32 +209,46 @@ void setup ( void )
         pinMode ( i, INPUT);
         digitalWrite ( i, HIGH );   // pull-up
         s_counters[i] = 0;
+        io_direction[i] = SQ_FALSE;
+        io_last_read[i] = SQ_FALSE;
+        io_last_written[i] = SQ_FALSE;
+        io_counter_enable[i] = SQ_FALSE;
+        io_trig_h2l[i] = SQ_TRUE;
+        io_trig_l2h[i] = SQ_FALSE;
     }
     SequantoAutomation::init();
 }
 
-unsigned int inputs = PIND | (((unsigned int)PINB) << 8 );
-unsigned int changed, trigged = 0;
+//unsigned int inputs = PIND | (((unsigned int)PINB) << 8 );
+//unsigned int changed, trigged = 0;
 
 void loop ( void )
 {
     int i;
     SequantoAutomation::poll();
-
-    inputs = (PIND | (((unsigned int)PINB) << 8 )) & (~io_direction);
-    changed = inputs ^ io_last_read;
-    trigged = changed & io_counter_enable & (((io_trig_h2l ^ inputs ) & io_trig_h2l) | (((~io_trig_l2h) ^ inputs ) & io_trig_l2h));
-    io_last_read = inputs;
-
+    
     for ( i = PIN_OFFSET ; i < NUMBER_OF_PINS ; i++ )
     {
-        if ( ( changed & PIN_MASK(i) ) != 0 )
+        if ( io_direction[i] == SQ_FALSE )
         {
-            //sq_digital_pin_updated ( i, digital_pin_get(i) );
-        }
-        if ( ( trigged & PIN_MASK(i) ) != 0 )
-        {
-            s_counters[i]++;
+          SQBool read = digitalRead(i) == HIGH ? SQ_TRUE : SQ_FALSE;
+          if ( read != io_last_read[i] )
+          {
+             //sq_digital_pin_updated ( i, digital_pin_get(i) );
+          
+            if ( io_counter_enable[i] == SQ_TRUE )
+            {
+              if ( read == SQ_FALSE && io_trig_h2l[i] == SQ_TRUE )
+              {
+                  s_counters[i]++;
+              }
+              if ( read == SQ_TRUE && io_trig_l2h[i] == SQ_TRUE )
+              {
+                  s_counters[i]++;
+              }
+            }
+            io_last_read[i] = read;
+          }
         }
     }
 }
