@@ -97,6 +97,10 @@ SQStream * sq_stream_open ( int _portNumber )
     return ret;
 }
 
+#endif
+
+#endif
+
 void sq_stream_internal_close_client ( SQStream * _stream )
 {
     shutdown ( _stream->m_listenerSocket, SHUT_RD );
