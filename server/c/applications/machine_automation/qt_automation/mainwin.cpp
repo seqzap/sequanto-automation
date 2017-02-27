@@ -115,3 +115,34 @@ void MainWin::on_m_changeColor_clicked()
    }
    this->setPalette ( palette );
 }
+
+extern "C" void close_connection();
+extern "C" void open_connection();
+
+class CloseConnectionTask : public QRunnable
+{
+  void run()
+  {
+    close_connection();
+  }
+};
+
+void MainWin::on_m_closeConnection_clicked()
+{
+  qDebug() << "Close";
+
+  QThreadPool::globalInstance()->start ( new CloseConnectionTask() );
+    
+  ui.m_closeConnection->setEnabled(false);
+  ui.m_openConnection->setEnabled(true);
+}
+
+void MainWin::on_m_openConnection_clicked()
+{
+  qDebug() << "Open";
+
+  open_connection();
+  
+  ui.m_openConnection->setEnabled(false);
+  ui.m_closeConnection->setEnabled(true);
+}

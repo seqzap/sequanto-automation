@@ -24,6 +24,8 @@ private slots:
    void on_m_updateButton_clicked();
    void on_m_addLabel_clicked ();
    void on_m_changeColor_clicked ();
+   void on_m_closeConnection_clicked();
+   void on_m_openConnection_clicked();
 
 private:
    Ui::MainWindow ui;

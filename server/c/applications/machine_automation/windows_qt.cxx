@@ -26,13 +26,29 @@ SQByteArray * ToByteArray ( const QByteArray & _byteArray )
    return ret;
 }
 
+QtApplicationMachineAutomationEventFilter * s_currentEventFilter = NULL;
+
 extern "C" void windows_init_if_not_already ()
 {
    if ( !initialized )
    {
-      QApplication::instance()->installEventFilter ( new QtApplicationMachineAutomationEventFilter(QApplication::instance()) );
-
+      s_currentEventFilter = new QtApplicationMachineAutomationEventFilter(QApplication::instance());
+      
+      QApplication::instance()->installEventFilter ( s_currentEventFilter );
+      
       initialized = true;
+   }
+}
+
+extern "C" void windows_destroy_if_not_already ()
+{
+   if ( initialized )
+   {
+      QApplication::instance()->removeEventFilter ( s_currentEventFilter );
+
+      s_currentEventFilter = NULL;
+      
+      initialized = false;
    }
 }
 

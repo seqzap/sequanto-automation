@@ -262,6 +262,32 @@
      <string>&lt;Listening on...&gt;</string>
     </property>
    </widget>
+   <widget class="QPushButton" name="m_closeConnection">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>20</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Close Connection</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="m_openConnection">
+    <property name="geometry">
+     <rect>
+      <x>370</x>
+      <y>60</y>
+      <width>131</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Open Connection</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
@@ -269,7 +295,7 @@
      <x>0</x>
      <y>0</y>
      <width>845</width>
-     <height>29</height>
+     <height>27</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
