@@ -97,8 +97,12 @@ SQStream * sq_stream_open ( int _portNumber )
     return ret;
 }
 
+#ifdef SQ_USE_WINSOCK
+#define SHUT_RD SD_RECEIVE
 #endif
 
+#ifdef SQ_USE_WINSOCK
+#define SHUT_WR SD_SEND
 #endif
 
 void sq_stream_internal_close_client ( SQStream * _stream )
