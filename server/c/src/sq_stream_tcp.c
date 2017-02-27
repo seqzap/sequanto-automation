@@ -99,30 +99,16 @@ SQStream * sq_stream_open ( int _portNumber )
 
 void sq_stream_internal_close_client ( SQStream * _stream )
 {
-#  ifdef SQ_USE_WINSOCK
-    int ret;
-    SQByte byte;
-#  endif
-
+    shutdown ( _stream->m_listenerSocket, SHUT_RD );
+#ifdef SQ_USE_WINSOCK
+    closesocket ( _stream->m_listenerSocket );
+#else
+    close ( _stream->m_listenerSocket );
+#endif
     /* Closing any currently open client socket */
     if ( _stream->m_clientSocket != SOCKET_ERROR )
     {
-#  ifdef SQ_USE_WINSOCK
-        /* According to the Winsock Programmer's FAQ, this is how a socket should be closed.
-         * http://tangentsoft.net/wskfaq/newbie.html#howclose
-         */
-        shutdown ( _stream->m_listenerSocket, 1 );
-        ret = recv(_stream->m_listenerSocket, (char*) &byte, 1, 0 );
-        while ( ret != 0 && ret != SOCKET_ERROR )
-        {
-            ret = recv(_stream->m_listenerSocket, (char*) &byte, 1, 0 );
-        }
-        closesocket ( _stream->m_listenerSocket );
-	shutdown ( _stream->m_clientSocket, 1 );
-#  else
-	close ( _stream->m_listenerSocket );
-	shutdown ( _stream->m_clientSocket, 1 );
-#endif
+      	shutdown ( _stream->m_clientSocket, SHUT_WR );
     }
     _stream->m_dataAvailable = 0;
 }
