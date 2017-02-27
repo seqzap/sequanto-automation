@@ -49,6 +49,8 @@ void sq_server_destroy ( SQServer * _server )
     sq_stream_close ( _server->m_stream );
     _server->m_stream = NULL;
 
+    sq_parser_destroy ( &_server->m_parser );
+    
     server_instance = NULL;
 }
 
