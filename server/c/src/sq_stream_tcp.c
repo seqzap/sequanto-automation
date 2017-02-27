@@ -79,6 +79,8 @@ SQStream * sq_stream_open ( int _portNumber )
 #ifdef SQ_USE_WINSOCK
     ioctlsocket(ret->m_listenerSocket, FIONBIO, 0 );
 #else
+    int optval = 1;
+    setsockopt(ret->m_listenerSocket, SOL_SOCKET, SO_REUSEADDR, &optval, sizeof(optval));
     ioctl(ret->m_listenerSocket, FIONBIO, 0 );
 #endif
     if ( bind ( ret->m_listenerSocket, (const void*) &sa, sizeof(sa) ) == 0 )
@@ -116,11 +118,12 @@ void sq_stream_internal_close_client ( SQStream * _stream )
             ret = recv(_stream->m_listenerSocket, (char*) &byte, 1, 0 );
         }
         closesocket ( _stream->m_listenerSocket );
+	shutdown ( _stream->m_clientSocket, 1 );
 #  else
-        close ( _stream->m_listenerSocket );
+	close ( _stream->m_listenerSocket );
+	shutdown ( _stream->m_clientSocket, 1 );
 #endif
     }
-    _stream->m_clientSocket = SOCKET_ERROR;
     _stream->m_dataAvailable = 0;
 }
 
@@ -205,6 +208,8 @@ void sq_stream_close ( SQStream * _stream )
 
     sq_stream_internal_close_client ( _stream );
 
+    sq_thread_join ( _stream->m_pollingThread );
+    
 #  ifdef SQ_USE_WINSOCK
     closesocket ( _stream->m_listenerSocket );
 #  else
