@@ -1,5 +1,6 @@
 import types
 import string
+import io
 
 def format_value ( _value ):
     '''
@@ -282,19 +283,65 @@ class AutomationObject ( object ):
             assert response.startswith('+LIST ')
             for childName in response.split(' ')[1:]:
                 yield AutomationObject(self.m_client, childName, self)
+    
+    def findChild ( self, name ):
+        for child in self.children:
+            if child.name == name:
+                return child
+        raise Exception('Child named %s not found in %s.' % (child, self.fullname))
 
 class Client ( object ):
-    def __init__ ( self, _io ):
-        self.m_io = _io
-
+    def __init__ ( self, _io, _baudrate = 57600, _log = False ):
+        self.log = _log
+        
+        if type(_io) in types.StringTypes:
+            import serial
+            
+            self.m_io = SerialWrapper( serial.Serial(_io, _baudrate, timeout = 1) )
+        else:
+            self.m_io = _io
+    
     @property
     def root ( self ):
         return AutomationObject ( self, '<ROOT>' )
+    
+    def find(self, *names):
+        obj = self.root
+        for name in names:
+            obj = obj.findChild(name)
+        return obj
 
     def request ( self, _request ):
-        print 'REQ:', _request
+        if self.log:
+            print 'REQ: ', _request
         self.m_io.write ( unicode(_request + '\n') )
         self.m_io.flush()
-        line = self.m_io.readline().strip()
-        print 'RESP', line
-        return line
+        line = ''
+        while True:
+            line = self.m_io.readline().strip()
+            if line[0] == '!':
+                if self.log:
+                    print 'SKIP:', line
+            else:
+                if self.log:
+                    print 'RESP', line
+                return line
+
+class SerialWrapper ( io.TextIOBase ):
+    def __init__ ( self, _serial ):
+        io.TextIOBase.__init__ ( self )
+        self.m_serial = _serial
+
+    def readline ( self ):
+        ret = ''
+        while True:
+            c = self.m_serial.read(1)
+            if c == '\n':
+                return ret
+            elif c == '\r':
+                continue
+            else:
+                ret += c
+
+    def write ( self, _data ):
+        self.m_serial.write ( _data )
