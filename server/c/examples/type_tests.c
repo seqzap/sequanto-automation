@@ -430,6 +430,10 @@ void loop ( void )
     SequantoAutomation::poll();
 }
 
+void server_reboot ( void )
+{
+}
+
 #else
 static SQBool s_rebootCalled = SQ_FALSE;
 
