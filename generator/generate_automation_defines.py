@@ -15,6 +15,7 @@ code_dir = 'code'
 if path.isdir ( path.join ( path.dirname(__file__), 'code' ) ):
     code_dir = path.join ( path.dirname(__file__), 'code' )
 
+from sequanto_automation import is_string
 import sequanto_automation.codeparser as codeparser
 from sequanto_automation.codeparser import get as get_code_parser
 from sequanto_automation.codeparser import Parameter
@@ -156,7 +157,7 @@ class SmartObject ( object ):
             yield '', []
 
         else:
-            if type(metaPath[index]) in types.StringTypes:
+            if is_string(metaPath[index]):
                 for rest, values in self._generateSmartObjectPaths ( metaPath, index + 1 ):
                     yield '/' + metaPath[index] + rest, values
             else:
