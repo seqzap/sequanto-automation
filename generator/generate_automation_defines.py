@@ -7,7 +7,6 @@ if sys.version_info[0] == 2 and sys.version_info[1] < 6:
     from sets import Set as set
 from os import path
 import datetime
-from StringIO import StringIO
 
 if path.isdir ( path.join ( path.dirname(__file__), 'lib' ) ):
     sys.path.append ( path.join ( path.dirname(__file__), 'lib' ) )
@@ -342,7 +341,7 @@ class AutomationFile ( object ):
 
     def parse ( self, _input, _searchDirectory ):
         if not self.m_silent:
-            print 'Parsing %s' % self.m_errorReportingFilename
+            print ( 'Parsing %s' % self.m_errorReportingFilename )
 
         lineNumber = 1
         for line in _input.readlines():
@@ -411,7 +410,7 @@ class AutomationFile ( object ):
     def reportError ( self, _lineNumber, _text ):
         global error_reported
 
-        print '%s (%i) : error: %s' % (self.m_errorReportingFilename, _lineNumber, _text)
+        print ( '%s (%i) : error: %s' % (self.m_errorReportingFilename, _lineNumber, _text) )
         error_reported = True
 
     def getRecognizedCType ( self, type ):
@@ -466,7 +465,7 @@ class AutomationFile ( object ):
                     fp = open ( filename, 'r' )
                     self.m_parser.parse ( fp.read() )
                     fp.close()
-            except Exception, ex:
+            except Exception as ex:
                 self.reportError ( lineNumber, ex )
 
         propertyIndex = 0
@@ -510,7 +509,7 @@ class AutomationFile ( object ):
                         self.reportError ( lineNumber, 'Could not find set function "%s"' % set_function )
                 else:
                     self.reportError ( lineNumber, 'Could not find get function "%s"' % get_function )
-            except Exception, ex:
+            except Exception as ex:
                 self.reportError ( lineNumber, ex )
 
         functionIndex = 0
@@ -548,7 +547,7 @@ class AutomationFile ( object ):
                         self.reportError ( lineNumber, 'The return type is not recognized (%s)' % (function.returnType) )
                 else:
                     self.reportError ( lineNumber, 'Could not find function "%s"' % function )
-            except Exception, ex:
+            except Exception as ex:
                 self.reportError ( lineNumber, ex )
 
         monitorIndex = 0
@@ -578,7 +577,7 @@ class AutomationFile ( object ):
                         self.m_foundMonitors.append ( monitor )
                         monitorIndex += 1
 
-            except Exception, ex:
+            except Exception as ex:
                 self.reportError ( lineNumber, ex )
 
         branchIndex = 0
@@ -587,7 +586,7 @@ class AutomationFile ( object ):
                 self.m_objectPaths.append ( (objectPath, 'INFO_TYPE_BRANCH', branchIndex) )
                 self.m_foundBranches.append ( Branch(branchIndex, objectPath) )
                 branchIndex += 1
-            except Exception, ex:
+            except Exception as ex:
                 self.reportError ( lineNumber, ex )
 
         for lineNumber, name in self.m_enums:
@@ -661,7 +660,7 @@ class AutomationFile ( object ):
 
     def generate ( self ):
         if not self.m_silent:
-            print 'Writing interface to %s_automation.c (in %s)' % (self.m_name, path.abspath(path.curdir))
+            print ( 'Writing interface to %s_automation.c (in %s)' % (self.m_name, path.abspath(path.curdir)) )
 
         generatorDir = path.dirname(sys.argv[0])
         arduinoConfig = path.abspath(path.join(generatorDir, '..', '..', '..', 'libraries', 'SequantoAutomation', 'utility', 'src', 'config.h'))
@@ -1044,7 +1043,7 @@ class AutomationFile ( object ):
             maxNumberOfValues = max(maxNumberOfValues, len(monitor.automationTypes))
 
         fp.write ( 'static const int NUMBER_OF_MONITOR_VALUES SQ_CONST_VARIABLE = %i;\n' % maxNumberOfValues )
-        fp.write ( 'typedef struct _SQMonitorInfo { %s; unsigned char index; } SQMonitorInfo;\n' % ('; '.join(['SQValueType value%i' % i for i in xrange(maxNumberOfValues)]) ) )
+        fp.write ( 'typedef struct _SQMonitorInfo { %s; unsigned char index; } SQMonitorInfo;\n' % ('; '.join(['SQValueType value%i' % i for i in range(maxNumberOfValues)]) ) )
         fp.write ( 'static const SQMonitorInfo MONITOR_LIST[] SQ_CONST_VARIABLE = {\n' )
         # Some compilers (e.g. VS2005) does not support empty lists, so add a dummy one.
         if len(self.m_foundMonitors) == 0:
@@ -1142,7 +1141,7 @@ for arg in sys.argv[1:]:
     fp = None
     try:
         fp = open (arg, 'r')
-    except Exception, ex:
+    except Exception as ex:
         automationFile.reportError ( 0, 'Could not open file named %s: %s' % (arg, ex) )
         sys.exit(-1)
 
